@@ -1,0 +1,72 @@
+#!/usr/bin/openrc-run
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021 alexcoder04 <https://github.com/alexcoder04>
+# 
+# cache-mgr - openrc service to load/save cache folders
+# 
+
+# this is where cache is stored
+CACHE_DIRECTORY="/media/cache"
+# this user will own and use the cache files
+CACHE_USER="alex"
+# how big the ramdisk should be
+CACHE_SIZE="6G"
+# these are directories linked into the ramdisk
+DIRS="chromium go-build lf mozilla npm nvim pip qutebrowser nsxiv typescript"
+
+depend() {
+    after localmount
+}
+
+start() {
+    ebegin "Creating cache directories in RAM"
+
+    # mount the ramdisk
+    mount -t tmpfs tmpfs "$CACHE_DIRECTORY" \
+        -o "defaults,uid=$CACHE_USER,mode=700,size=$CACHE_SIZE" \
+        || eend 1 "Failed to mount ramdisk"
+
+    # create directories
+    for d in $DIRS; do
+        mkdir -m 700 "$CACHE_DIRECTORY/$d"
+        chown "$CACHE_USER:root" "$CACHE_DIRECTORY/$d"
+
+        # check if they are linked correctly
+        if [ ! "$(readlink "/home/$CACHE_USER/.cache/$d")" = "$CACHE_DIRECTORY/$d" ]; then
+            rm -rf "/home/$CACHE_USER/.cache/$d"
+            ln -s "/home/$CACHE_USER/.cache/$d" "$CACHE_DIRECTORY/$d"
+        fi
+    done
+
+    # set up firefox profiles
+    mkdir -m 700 "$CACHE_DIRECTORY/mozilla/profiles"
+    chown "$CACHE_USER:root" "$CACHE_DIRECTORY/mozilla/profiles"
+    echo "Loading default firefox profile"
+    lz4 -dc "/home/$CACHE_USER/.local/share/mozilla/default.tar.lz4" \
+        | tar -xp -f - -C /media/cache/mozilla/profiles \
+        || ewarn "Cannot load default firefox profile"
+
+    eend 0
+}
+
+stop() {
+    ebegin "Saving cache"
+
+    # save firefox profiles
+    cd "$CACHE_DIRECTORY/mozilla/profiles"
+    for p in $(/bin/ls .); do
+        echo "Saving $p firefox profile"
+        tar -cpf - "$p" | lz4 -c >"/home/$CACHE_USER/.local/share/mozilla/$p.tar.lz4" \
+            || ewarn "Cannot save $p firefox profile"
+    done
+
+    eend 0
+}
+
+# vim: filetype=sh
+
