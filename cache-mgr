@@ -39,7 +39,7 @@ start() {
         # check if they are linked correctly
         if [ ! "$(readlink "/home/$CACHE_USER/.cache/$d")" = "$CACHE_DIRECTORY/$d" ]; then
             rm -rf "/home/$CACHE_USER/.cache/$d"
-            ln -s "/home/$CACHE_USER/.cache/$d" "$CACHE_DIRECTORY/$d"
+            ln -s "$CACHE_DIRECTORY/$d" "/home/$CACHE_USER/.cache/$d"
         fi
     done
 
@@ -64,6 +64,9 @@ stop() {
         tar -cpf - "$p" | lz4 -c >"/home/$CACHE_USER/.local/share/mozilla/$p.tar.lz4" \
             || ewarn "Cannot save $p firefox profile"
     done
+
+    # unmount the ramdisk
+    umount /media/cache
 
     eend 0
 }
