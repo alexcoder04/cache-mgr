@@ -20,7 +20,7 @@ CACHE_SIZE="6G"
 DIRS="chromium go-build lf mozilla npm nvim pip qutebrowser nsxiv typescript"
 
 depend() {
-    after localmount
+    need localmount
 }
 
 start() {
