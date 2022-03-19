@@ -17,7 +17,8 @@ CACHE_USER="alex"
 # how big the ramdisk should be
 CACHE_SIZE="6G"
 # these are directories linked into the ramdisk
-DIRS="chromium go-build lf mozilla npm nvim pip qutebrowser nsxiv typescript"
+#DIRS="chromium go-build lf mozilla npm nvim pip qutebrowser nsxiv typescript"
+DIRS="chromium go-build mozilla npm nvim pip qutebrowser typescript"
 
 depend() {
     need localmount

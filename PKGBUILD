@@ -1,7 +1,7 @@
 # Maintainer: alexcoder04 <alexcoder04@protonmail.com>
 pkgname=cache-mgr-git
 _pkgname=cache-mgr
-pkgver=0.1.0
+pkgver=0.1.1
 pkgrel=1
 epoch=
 pkgdesc="move cache files into ram"
