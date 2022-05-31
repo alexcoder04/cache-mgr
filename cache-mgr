@@ -8,7 +8,6 @@
 # Copyright (c) 2021 alexcoder04 <https://github.com/alexcoder04>
 # 
 # cache-mgr - openrc service to load/save cache folders
-# 
 
 # this is where cache is stored
 CACHE_DIRECTORY="/media/cache"
@@ -17,7 +16,6 @@ CACHE_USER="alex"
 # how big the ramdisk should be
 CACHE_SIZE="6G"
 # these are directories linked into the ramdisk
-#DIRS="chromium go-build lf mozilla npm nvim pip qutebrowser nsxiv typescript"
 DIRS="chromium go-build mozilla npm nvim pip qutebrowser typescript"
 
 depend() {
@@ -67,10 +65,9 @@ stop() {
     done
 
     # unmount the ramdisk
-    umount /media/cache
+    umount -lv /media/cache
 
     eend 0
 }
 
 # vim: filetype=sh
-

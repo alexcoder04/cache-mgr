@@ -4,7 +4,6 @@ NAME = cache-mgr
 
 PREFIX ?= /
 
-
 install:
-	install -Dm755 cache-mgr "$(DESTDIR)$(PREFIX)/etc/init.d/cache-mgr"
+	install -Dm755 cache-mgr "$(DESTDIR)$(PREFIX)/etc/init.d/$(NAME)"
 
