@@ -4,6 +4,9 @@
 This is an OpenRC service that creates a ramdisk for cache, links cache folders
 to it and loads/saves firefox profile into ram.
 
+**Warning 0**: this project is archived, I don't use and develop it anymore, but
+it is still kept here for archival and educational purposes.
+
 **Warning 1**: this is a rather hacky solution, that probably only fits my needs.
 
 **Warning 2**: it is an OpenRC service, so it is useless on distros with
